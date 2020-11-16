@@ -10,7 +10,7 @@ services:
       dockerfile: nginx.dockerfile
     container_name: nginx
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
       - ./src:/var/www/html:delegated
     depends_on:
@@ -25,10 +25,10 @@ services:
     restart: unless-stopped
     tty: true
     ports:
-      - "33061:3306"
+      - "3306:3306"
     environment:
       MYSQL_DATABASE: homestead
-      MYSQL_USER: homestead
+      MYSQL_USER: root
       MYSQL_PASSWORD: secret
       MYSQL_ROOT_PASSWORD: secret
       SERVICE_TAGS: dev
@@ -37,7 +37,19 @@ services:
       - laravel
     volumes:
       - ./mysql:/var/lib/mysql
-
+  # phpmyadmin
+  phpmyadmin:
+    depends_on:
+      - mysql
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - '8080:80'
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: secret 
+    networks:
+      - laravel
   php:
     build:
       context: .
